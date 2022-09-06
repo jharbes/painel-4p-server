@@ -1,21 +1,25 @@
 package com.service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.controller.dto.DataFileOnlyDetailsDTO;
 import com.controller.dto.DataFileOnlyPhotoDTO;
 import com.controller.dto.DetailProductDTO;
-import com.controller.dto.FilterPhotoDTO;
+import com.form.FilterForm;
 import com.model.DataFile;
 import com.repository.DataFileRepository;
 import com.repository.DataFileRepositoryImp;
 import com.repository.FilterRepositoryImp;
+import com.util.LocalDateConverter;
 import com.util.ModelMapperConverter;
 
 @Service
@@ -35,15 +39,15 @@ public class DataFileService {
 	    return dtos;
 	}
 	
-	public FilterPhotoDTO getFilterPhoto(long idBrand){
-		FilterPhotoDTO dtos = filterRepositoryImp.getFilterPhotos(idBrand);
-		return dtos;
-	}
 	
-	public List<DataFileOnlyDetailsDTO> getDetails(long idBrand) {
-		List<DataFile> datas = dataFileRepositoryimp.findByBrandwithOnlyDetails(idBrand);
-		List<DataFileOnlyDetailsDTO> dtos = datas.stream().map(data -> new DataFileOnlyDetailsDTO(data)).collect(Collectors.toList());
-	    return dtos;
+	public List<Object> getDetails( LocalDate initialDate ,LocalDate finalDate
+			, long idBrand, Map<String,String[]> filter) throws Exception {
+		try {
+			return dataFileRepositoryimp.findByBrandwithOnlyDetails(initialDate,finalDate
+					,idBrand,filter);
+		} catch (Exception e) {
+			throw new Exception("ERRO NA CONSULTA",e);
+		}
 	}
 	
 	

@@ -10,22 +10,17 @@ import com.model.Project;
 public class DataFileOnlyDetailsDTO {
 	
 	private long id;
-	private String shop;
+	private ShopDTO shop;
 	private List<DetailProductDTO> details;
-	private String brand;
+	private BrandDTO brand;
 	private LocalDate date;
-	private String promoter;
+	private PromoterDTO promoter;
 	private Project project;
 	
-	public DataFileOnlyDetailsDTO(DataFile dataFile) {
-	    this.id = dataFile.getId();
-	    this.shop = dataFile.getShop().getName();
-	    this.brand = dataFile.getBrand().getName();
-	    this.date = dataFile.getData();
-	    this.promoter = dataFile.getPromoter().getName();
-	    this.project = dataFile.getProject();
-	    this.details = dataFile.getDetailProducts().stream().map(data -> new DetailProductDTO(data)).collect(Collectors.toList());
+	public DataFileOnlyDetailsDTO() {
+		
 	}
+	
 	
 	public long getId() {
 		return id;
@@ -33,10 +28,10 @@ public class DataFileOnlyDetailsDTO {
 	public void setId(long id) {
 		this.id = id;
 	}
-	public String getShop() {
+	public ShopDTO getShop() {
 		return shop;
 	}
-	public void setShop(String shop) {
+	public void setShop(ShopDTO shop) {
 		this.shop = shop;
 	}
 	public List<DetailProductDTO> getDetails() {
@@ -45,10 +40,10 @@ public class DataFileOnlyDetailsDTO {
 	public void setDetails(List<DetailProductDTO> details) {
 		this.details = details;
 	}
-	public String getBrand() {
+	public BrandDTO getBrand() {
 		return brand;
 	}
-	public void setBrand(String brand) {
+	public void setBrand(BrandDTO brand) {
 		this.brand = brand;
 	}
 	public LocalDate getDate() {
@@ -57,10 +52,10 @@ public class DataFileOnlyDetailsDTO {
 	public void setDate(LocalDate date) {
 		this.date = date;
 	}
-	public String getPromoter() {
+	public PromoterDTO getPromoter() {
 		return promoter;
 	}
-	public void setPromoter(String promoter) {
+	public void setPromoter(PromoterDTO promoter) {
 		this.promoter = promoter;
 	}
 	public Project getProject() {

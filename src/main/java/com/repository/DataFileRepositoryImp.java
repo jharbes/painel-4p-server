@@ -2,8 +2,12 @@ package com.repository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -34,15 +38,16 @@ public class DataFileRepositoryImp {
 	@Autowired
 	DetailRepositoryImp detailRepositoryImp;
 
-	//Funcao que busca apenas datafile com photos
+	// Funcao que busca apenas datafile com photos
 	public List<DataFile> findByBrandwithOnlyPhotos(long idBrand) {
 		List<DataFile> datas = new ArrayList<>();
 		try {
 			TypedQuery<Object[]> query = entityManager
 					.createQuery("SELECT distinct d.id,d.shop,b,d.data,d.promoter,d.project"
 							+ " FROM DataFile d inner join d.brand b"
-							+ " WHERE b.id=:idBrand", Object[].class);
+							+ " WHERE b.id=:idBrand and d.data = '2022-08-26' ", Object[].class);
 			query.setParameter("idBrand", idBrand);
+			query.setMaxResults(10);
 			for (Object[] row : query.getResultList()) {
 				DataFile dataFile = new DataFile();
 				dataFile.setId((long) row[0]);
@@ -59,36 +64,61 @@ public class DataFileRepositoryImp {
 		}
 		return datas;
 	}
-	
-	public List<DataFile> findByBrandwithOnlyDetails(long idBrand) {
+
+	public List<Object> findByBrandwithOnlyDetails(LocalDate initialDate, LocalDate finalDate, long idBrand,
+			Map<String, String[]> filter) throws Exception {
 		List<DataFile> datas = new ArrayList<>();
-		try {
-			TypedQuery<Object[]> query = entityManager
-					.createQuery("SELECT distinct d.id,d.shop,b,d.data,d.promoter,d.project"
-							+ " FROM DataFile d inner join d.brand b"
-							+ " WHERE b.id=:idBrand", Object[].class);
-			query.setParameter("idBrand", idBrand);
-			for (Object[] row : query.getResultList()) {
-				DataFile dataFile = new DataFile();
-				dataFile.setId((long) row[0]);
-				dataFile.setShop((Shop) row[1]);
-				dataFile.setBrand((Brand) row[2]);
-				dataFile.setData((LocalDate) row[3]);
-				dataFile.setPromoter((Promoter) row[4]);
-				dataFile.setProject((Project) row[5]);
-				dataFile.setDetailProducts(detailRepositoryImp.listDetailsByDataFile((long) row[0]));
-				datas.add(dataFile);
-			}
-		}catch(Exception e) {
-			System.out.println(e.getMessage());
-		}
-		return datas;
+		Map<String, List<Object>> objects = new HashMap<>();
+		String sql = "SELECT distinct d.id as id_datafile ,d.brand_id as id_brand ,d.shop_id as id_shop ,d.data as date ,d.project as id_project, d.promoter_id as id_promoter " 
+		+ " FROM datafile d, shop s, promoter p, detailproduct d2 , datafile_detailproduct dd, product p2 "
+	    + " where d.brand_id =:idBrand and d.shop_id = s.id and d.promoter_id = p.id "
+		+ " and d.id = dd.datafile_id  and dd.detailproducts_id = d2.id and d2.product_id = p2.id "
+		+ " and d.data >= :initialDate and d.data <= :finalDate ";
+		
+		sql = sql+this.changeSQLString(sql, filter);		
+		
+		Query query = entityManager.createNativeQuery(sql);
+		query.setParameter("idBrand", idBrand);
+		query.setParameter("initialDate", initialDate);
+		query.setParameter("finalDate", finalDate);
+		
+		changeQueryParameter(query, filter);
+		
+		return query.getResultList();
 	}
 	
-	public List<DataFile> getFilter(){
-		Query query = entityManager
-				.createQuery("SELECT d.shop.name,d.promoter.name,d.project,p.section"
-						+ " FROM DataFile d join d.photos p");
-		return query.getResultList();
+	private String changeSQLString(String sql, Map<String, String[]> filter) {
+		String return_sql = "";
+		if(filter.containsKey("shop")) {
+			return_sql = return_sql+ " or s.name in ( :shops ) ";
+		}
+		if(filter.containsKey("promoter")) {
+			return_sql = return_sql+ " or p.name in ( :promoters ) ";
+		}
+		if(filter.containsKey("product")) {
+			return_sql = return_sql+ " or p2.name in ( :products ) ";
+		}
+		if(filter.containsKey("project")) {
+			return_sql = return_sql+ " or d.project in ( :projects ) ";
+		}
+		if(!return_sql.equals("")) {
+			return_sql = " and ( false "+return_sql +")";
+		}
+		return return_sql;
+	}
+	
+	private void changeQueryParameter(Query query, Map<String, String[]> filter) {
+		if(filter.containsKey("shop")) {
+			query.setParameter("shops", Arrays.asList(filter.get("shop")));
+		}
+		if(filter.containsKey("promoter")) {
+			query.setParameter("promoters", Arrays.asList(filter.get("promoter")));
+		}
+		if(filter.containsKey("product")) {
+			query.setParameter("products", Arrays.asList(filter.get("product")));
+		}
+		if(filter.containsKey("project")) {
+			query.setParameter("projects", Arrays.asList(filter.get("project")).stream().map(x -> Integer.parseInt(x)).collect(Collectors.toList()));
+		}
 	}
 }

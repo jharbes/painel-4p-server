@@ -1,6 +1,13 @@
 package com.controller;
 
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -11,20 +18,32 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.controller.dto.DataFileDTO;
 import com.controller.dto.DataFileOnlyDetailsDTO;
 import com.controller.dto.DataFileOnlyPhotoDTO;
-import com.controller.dto.FilterDTO;
-import com.controller.dto.FilterPhotoDTO;
+import com.controller.dto.filter.FilterDTO;
+import com.controller.dto.filter.FilterGalleryDTO;
+import com.form.FilterForm;
 import com.model.DataFile;
+import com.model.DetailProduct;
+import com.model.Project;
 import com.repository.DataFileRepository;
 import com.repository.DataFileRepositoryImp;
+import com.service.BrandService;
 import com.service.DataFileService;
+import com.service.DetailProductService;
+import com.service.PromoterService;
+import com.service.ShopService;
 import com.turkraft.springfilter.boot.Filter;
+import com.util.LocalDateConverter;
 
 @RestController
 @RequestMapping("/datafile")
@@ -35,11 +54,19 @@ public class DataFileController {
 	@Autowired
 	DataFileRepositoryImp dataFileRepositoryImp;
 	@Autowired
+	PromoterService promoterService;
+	@Autowired
+	BrandService brandService;
+	@Autowired
+	ShopService shopService;
+	@Autowired
+	DetailProductService detailProductService;
+	@Autowired
 	DataFileService dataFileService;
 
 	@ResponseBody
-	@GetMapping("/photos/{idBrand}")
-	public ResponseEntity<List<DataFileOnlyPhotoDTO>> listPhotos(@PathVariable(value = "idBrand") long idBrand) {
+	@GetMapping("/photos")
+	public ResponseEntity listPhotos(@PathVariable String initialDate,@PathVariable String finalDate ,@PathVariable(value = "idBrand") long idBrand) {
 		try {
 			return ResponseEntity.ok(dataFileService.getPhotos(idBrand));
 		} catch (Exception e) {
@@ -48,27 +75,28 @@ public class DataFileController {
 	}
 	
 	@ResponseBody
-	@GetMapping("/photos/filter/{idBrand}")
-	public ResponseEntity<FilterPhotoDTO>filterPhotos(@PathVariable(value = "idBrand") long idBrand) {
+	@PostMapping("/details")
+	public ResponseEntity listDetails(@RequestParam String initialDate,@RequestParam  String finalDate
+			,@RequestParam long idBrand, @RequestBody  FilterForm filter) {
 		try {
-			return ResponseEntity.ok(dataFileService.getFilterPhoto(idBrand));
+			List<DataFileOnlyDetailsDTO> dtos = new ArrayList<>();
+			List<Object> datas = dataFileService.getDetails(LocalDateConverter.convertToLocalDate(initialDate) , LocalDateConverter.convertToLocalDate(finalDate)
+					,idBrand,filter.getFilter());
+			for(Object obj: datas) {
+				Object[] cast = (Object[]) obj;
+				DataFileOnlyDetailsDTO dto = new DataFileOnlyDetailsDTO();
+				dto.setId(((BigInteger) cast[0]).longValue());
+				dto.setBrand(brandService.convertToDto(brandService.getBrandById(((BigInteger) cast[1]).longValue()))); 
+				dto.setShop(shopService.convertToDto(shopService.getBrandById(((BigInteger) cast[2]).longValue()))); 
+				dto.setDate(((java.sql.Date) cast[3]).toLocalDate());
+				dto.setPromoter(promoterService.convertToDto(promoterService.getBrandById(((BigInteger)cast[5]).longValue())));
+				dto.setDetails(detailProductService.convertToDTOS(detailProductService.getDetailProductByDataFile(dto.getId())));
+				dtos.add(dto);
+			}
+			return ResponseEntity.status(HttpStatus.OK).body(dtos);
 		} catch (Exception e) {
-			return new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
+ 			return new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
 		}
-	}
-	
-	@ResponseBody
-	@GetMapping("/details/{idBrand}")
-	public ResponseEntity<List<DataFileOnlyDetailsDTO>> listDetails(@PathVariable(value = "idBrand") long idBrand) {
-		try {
-			return ResponseEntity.ok(dataFileService.getDetails(idBrand));
-		} catch (Exception e) {
-			return new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
-		}
-	}
-	
-	@GetMapping("/filter")
-	public List<DataFile> getFilters() {
-		return dataFileRepositoryImp.getFilter();
+		
 	}
 }

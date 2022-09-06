@@ -23,6 +23,10 @@ public class DetailProduct {
 	private String Ruptura;
 	private long stock;
 	
+	public DetailProduct() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	public long getId() {
 		return id;
 	}
