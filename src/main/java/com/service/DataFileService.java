@@ -33,10 +33,14 @@ public class DataFileService {
     ModelMapperConverter modelConverter;
 	
 	
-	public List<DataFileOnlyPhotoDTO> getPhotos(Long idBrand){
-		List<DataFile> datas = dataFileRepositoryimp.findByBrandwithOnlyPhotos(idBrand);
-		List<DataFileOnlyPhotoDTO> dtos = datas.stream().map(data -> new DataFileOnlyPhotoDTO(data)).collect(Collectors.toList());
-	    return dtos;
+	public List<Object> getPhotos(LocalDate initialDate ,LocalDate finalDate
+			, long idBrand, Map<String,String[]> filter) throws Exception{
+		try {
+			return dataFileRepositoryimp.findByBrandwithOnlyPhotos(initialDate,finalDate
+					,idBrand,filter);
+		} catch (Exception e) {
+			throw new Exception("ERRO NA CONSULTA",e);
+		}
 	}
 	
 	

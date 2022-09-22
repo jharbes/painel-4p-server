@@ -19,7 +19,7 @@ public class TokenService {
 	public Map<String,Object> generateToken(Authentication authentication) {
 		User logged = (User) authentication.getPrincipal();
 		Date today = new Date();
-		Date dateExpiration = new Date(today.getTime() + Long.parseLong("10000000000"));
+		Date dateExpiration = new Date(today.getTime() + Long.parseLong("1000000"));
 		Map<String,Object> _return = new HashMap();
 		Map<String,Object> claims = new HashMap<>();
         _return.put("token", Jwts.builder().setIssuer("token").setSubject(logged.getId().toString()).setIssuedAt(today)

@@ -12,21 +12,14 @@ import com.model.Project;
 public class DataFileOnlyPhotoDTO {
 	
 	private long id;
-	private String shop;
+	private ShopDTO shop;
 	private List<PhotoDTO> photos;
-	private String brand;
+	private BrandDTO brand;
 	private LocalDate date;
-	private String promoter;
+	private PromoterDTO promoter;
 	private Project project;
 	
-	public DataFileOnlyPhotoDTO(DataFile dataFile) {
-		this.id = dataFile.getId();
-		this.brand = dataFile.getBrand().getName();
-		this.shop = dataFile.getShop().getName();
-		this.date = dataFile.getData();
-		this.promoter = dataFile.getPromoter().getName();
-		this.project = dataFile.getProject();
-		this.photos = dataFile.getPhotos().stream().map(data -> new PhotoDTO(data)).collect(Collectors.toList());
+	public DataFileOnlyPhotoDTO() {
 	}
 	
 	public long getId() {
@@ -35,10 +28,10 @@ public class DataFileOnlyPhotoDTO {
 	public void setId(long id) {
 		this.id = id;
 	}
-	public String getShop() {
+	public ShopDTO getShop() {
 		return shop;
 	}
-	public void setShop(String shop) {
+	public void setShop(ShopDTO shop) {
 		this.shop = shop;
 	}
 	public List<PhotoDTO> getPhotos() {
@@ -47,16 +40,16 @@ public class DataFileOnlyPhotoDTO {
 	public void setPhotos(List<PhotoDTO> photos) {
 		this.photos = photos;
 	}
-	public String getBrand() {
+	public BrandDTO getBrand() {
 		return brand;
 	}
-	public void setBrand(String brand) {
+	public void setBrand(BrandDTO brand) {
 		this.brand = brand;
 	}
-	public String getPromoter() {
+	public PromoterDTO getPromoter() {
 		return promoter;
 	}
-	public void setPromoter(String promoter) {
+	public void setPromoter(PromoterDTO promoter) {
 		this.promoter = promoter;
 	}
 	public Project getProject() {

@@ -43,5 +43,12 @@ public class FilterService {
 			filterGalleryDTO.setProject(filterRepositoryImp.getAllValuesToProjectPossibleToFilter(initialDate, finalDate, brandId));
 	        return filterGalleryDTO;
 		}
+		
+		public FilterGalleryDTO getAllValuesPossibleToFilterToActivitionCard( LocalDate initialDate,   LocalDate finalDate,  Long brandId){
+			FilterGalleryDTO filterGalleryDTO = new FilterGalleryDTO();
+			filterGalleryDTO.setShop(filterRepositoryImp.getAllValuesToShopPossibleToFilter(initialDate, finalDate, brandId));
+			filterGalleryDTO.setProject(filterRepositoryImp.getAllValuesToProjectPossibleToFilter(initialDate, finalDate, brandId));
+	        return filterGalleryDTO;
+		}
 
 }

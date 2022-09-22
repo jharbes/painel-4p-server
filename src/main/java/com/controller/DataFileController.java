@@ -40,6 +40,7 @@ import com.repository.DataFileRepositoryImp;
 import com.service.BrandService;
 import com.service.DataFileService;
 import com.service.DetailProductService;
+import com.service.PhotoService;
 import com.service.PromoterService;
 import com.service.ShopService;
 import com.turkraft.springfilter.boot.Filter;
@@ -62,13 +63,30 @@ public class DataFileController {
 	@Autowired
 	DetailProductService detailProductService;
 	@Autowired
+	PhotoService photoService;
+	@Autowired
 	DataFileService dataFileService;
 
 	@ResponseBody
-	@GetMapping("/photos")
-	public ResponseEntity listPhotos(@PathVariable String initialDate,@PathVariable String finalDate ,@PathVariable(value = "idBrand") long idBrand) {
+	@PostMapping("/photos")
+	public ResponseEntity listPhotos(@RequestParam String initialDate,@RequestParam  String finalDate
+			,@RequestParam long idBrand, @RequestBody  FilterForm filter) {
 		try {
-			return ResponseEntity.ok(dataFileService.getPhotos(idBrand));
+			List<DataFileOnlyPhotoDTO> dtos = new ArrayList<>();
+			List<Object> datas = dataFileService.getPhotos(LocalDateConverter.convertToLocalDate(initialDate) , LocalDateConverter.convertToLocalDate(finalDate)
+					,idBrand,filter.getFilter());
+			for(Object obj: datas) {
+				Object[] cast = (Object[]) obj;
+				DataFileOnlyPhotoDTO dto = new DataFileOnlyPhotoDTO();
+				dto.setId(((BigInteger) cast[0]).longValue());
+				dto.setBrand(brandService.convertToDto(brandService.getBrandById(((BigInteger) cast[1]).longValue()))); 
+				dto.setShop(shopService.convertToDto(shopService.getBrandById(((BigInteger) cast[2]).longValue()))); 
+				dto.setDate(((java.sql.Date) cast[3]).toLocalDate());
+				dto.setPromoter(promoterService.convertToDto(promoterService.getBrandById(((BigInteger)cast[5]).longValue())));
+                dto.setPhotos(photoService.convertToDTOS(photoService.getPhotosByDataFile(dto.getId())));
+				dtos.add(dto);
+			}
+			return ResponseEntity.status(HttpStatus.OK).body(dtos);
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
 		}

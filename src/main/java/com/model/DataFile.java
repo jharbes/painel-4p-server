@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -54,6 +56,7 @@ public class DataFile {
 	private LocalDate data;
 	@ManyToOne
 	private Promoter promoter;
+	@Enumerated(EnumType.STRING)
 	private Project project;
 	
 	public DataFile() {

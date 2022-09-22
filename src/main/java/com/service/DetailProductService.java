@@ -1,5 +1,6 @@
 package com.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,14 @@ public class DetailProductService {
 		 return detailProducts;
 	}
 	
+	public List<String[]> getRupturaBetweenDateByBrand(Long idBrand,LocalDate initialDate, LocalDate finalDate){
+		return detailProductRepository.getRupturaBetweenDateByBrand(idBrand, initialDate, finalDate);
+	}
+	
+	public List<String[]> getValidityBetweenDateByBrand(Long idBrand, LocalDate initialDate, LocalDate finalDate){
+		LocalDate validityFinalDate = finalDate.plusMonths(1);
+		return detailProductRepository.getValidityBetweenDateByBrand(idBrand, finalDate,initialDate, validityFinalDate);
+	}
 	public List<DetailProductDTO> convertToDTOS(List<DetailProduct> datas) {
 	 return	datas.stream().map(element -> modelMapper.map(element, DetailProductDTO.class)).collect(Collectors.toList());
 	}

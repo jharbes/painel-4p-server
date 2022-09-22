@@ -37,5 +37,17 @@ public class FilterController {
 		}
 		
 	}
+	
+	@GetMapping("/activation")
+	public ResponseEntity getAllValuesPossibleToFilterToActivitionCard(@RequestParam String initialDate, @RequestParam  String finalDate,@RequestParam Long brandId){
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(filterService.getAllValuesPossibleToFilterToActivitionCard(LocalDateConverter.convertToLocalDate(initialDate), LocalDateConverter.convertToLocalDate(finalDate), brandId));
+		}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
+		
+	}
+	
+	
 
 }

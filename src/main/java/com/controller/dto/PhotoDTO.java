@@ -7,6 +7,9 @@ public class PhotoDTO {
 	private String section;
 	private String url;
 	
+	public PhotoDTO() {
+		// TODO Auto-generated constructor stub
+	}
 	public PhotoDTO(Photo photo) {
 		this.id = photo.getId();
 		this.section = photo.getSection();
