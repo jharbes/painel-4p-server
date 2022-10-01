@@ -25,6 +25,7 @@ public class FilterController {
 		}catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
+		
 	}
 	
 	@GetMapping("/gallery")
@@ -44,5 +45,9 @@ public class FilterController {
 		}catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
+		
 	}
+	
+	
+
 }

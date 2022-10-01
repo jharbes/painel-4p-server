@@ -39,25 +39,25 @@ public class DataFileRepositoryImp {
 	DetailRepositoryImp detailRepositoryImp;
 
 	// Funcao que busca apenas datafile com photos
-	public List<Object> findByBrandwithOnlyPhotos(LocalDate initialDate, LocalDate finalDate, long idBrand,
+	public List<Object>  findByBrandwithOnlyPhotos(LocalDate initialDate, LocalDate finalDate, long idBrand,
 			Map<String, String[]> filter) {
-
+		
 		List<DataFile> datas = new ArrayList<>();
 		Map<String, List<Object>> objects = new HashMap<>();
-
-		String sql = "SELECT distinct d.id as id_datafile ,d.brand_id as id_brand ,d.shop_id as id_shop ,d.data as date ,d.project as id_project, d.promoter_id as id_promoter "
+		
+		String sql = "SELECT distinct d.id as id_datafile ,d.brand_id as id_brand ,d.shop_id as id_shop ,d.data as date ,d.project as id_project, d.promoter_id as id_promoter " 
 				+ " FROM datafile d, shop s, promoter p, detailproduct d2 , datafile_detailproduct dd, product p2 "
-				+ " where d.brand_id =:idBrand and d.shop_id = s.id and d.promoter_id = p.id "
+			    + " where d.brand_id =:idBrand and d.shop_id = s.id and d.promoter_id = p.id "
 				+ " and d.id = dd.datafile_id  and dd.detailproducts_id = d2.id and d2.product_id = p2.id "
 				+ " and d.data >= :initialDate and d.data <= :finalDate ";
-
-		sql = sql + this.changeSQLString(sql, filter);
+		
+		sql = sql+this.changeSQLString(sql, filter);		
 		Query query = entityManager.createNativeQuery(sql);
 		query.setParameter("idBrand", idBrand);
 		query.setParameter("initialDate", initialDate);
 		query.setParameter("finalDate", finalDate);
 		changeQueryParameter(query, filter);
-
+		
 		return query.getResultList();
 	}
 
@@ -65,79 +65,56 @@ public class DataFileRepositoryImp {
 			Map<String, String[]> filter) throws Exception {
 		List<DataFile> datas = new ArrayList<>();
 		Map<String, List<Object>> objects = new HashMap<>();
-		String sql = "SELECT distinct d.id as id_datafile ,d.brand_id as id_brand ,d.shop_id as id_shop ,d.data as date ,d.project as id_project, d.promoter_id as id_promoter "
-				+ " FROM datafile d, shop s, promoter p, detailproduct d2 , datafile_detailproduct dd, product p2 "
-				+ " where d.brand_id =:idBrand and d.shop_id = s.id and d.promoter_id = p.id "
-				+ " and d.id = dd.datafile_id  and dd.detailproducts_id = d2.id and d2.product_id = p2.id "
-				+ " and d.data >= :initialDate and d.data <= :finalDate ";
-
-		if(filter !=null) sql = sql + this.changeSQLString(sql, filter);
-
+		String sql = "SELECT distinct d.id as id_datafile ,d.brand_id as id_brand ,d.shop_id as id_shop ,d.data as date ,d.project as id_project, d.promoter_id as id_promoter " 
+		+ " FROM datafile d, shop s, promoter p, detailproduct d2 , datafile_detailproduct dd, product p2 "
+	    + " where d.brand_id =:idBrand and d.shop_id = s.id and d.promoter_id = p.id "
+		+ " and d.id = dd.datafile_id  and dd.detailproducts_id = d2.id and d2.product_id = p2.id "
+		+ " and d.data >= :initialDate and d.data <= :finalDate ";
+		
+		sql = sql+this.changeSQLString(sql, filter);		
+		
 		Query query = entityManager.createNativeQuery(sql);
 		query.setParameter("idBrand", idBrand);
 		query.setParameter("initialDate", initialDate);
 		query.setParameter("finalDate", finalDate);
-
-		if(filter !=null) changeQueryParameter(query, filter);
-
+		
+		changeQueryParameter(query, filter);
+		
 		return query.getResultList();
 	}
-
-	public List<Object> findByBrandwithOnlyDetailsToDownload(LocalDate initialDate, LocalDate finalDate, long idBrand,
-			Map<String, String[]> filter) throws Exception {
-		List<DataFile> datas = new ArrayList<>();
-		Map<String, List<Object>> objects = new HashMap<>();
-		String sql = "SELECT distinct d.id, d.data as date, s.name as shop ,d.project as id_project "
-				+ " FROM datafile d, shop s, promoter p, detailproduct d2 , datafile_detailproduct dd, product p2 "
-				+ " where d.brand_id =:idBrand and d.shop_id = s.id and d.promoter_id = p.id "
-				+ " and d.id = dd.datafile_id  and dd.detailproducts_id = d2.id and d2.product_id = p2.id "
-				+ " and d.data >= :initialDate and d.data <= :finalDate ";
-
-		if(filter!=null) sql = sql + this.changeSQLString(sql, filter);
-
-		Query query = entityManager.createNativeQuery(sql);
-		query.setParameter("idBrand", idBrand);
-		query.setParameter("initialDate", initialDate);
-		query.setParameter("finalDate", finalDate);
-
-		if(filter!=null) changeQueryParameter(query, filter);
-
-		return query.getResultList();
-	}
-
+	
 	private String changeSQLString(String sql, Map<String, String[]> filter) {
 		String return_sql = "";
-		if (filter.containsKey("shop")) {
-			return_sql = return_sql + " or s.name in ( :shops ) ";
+		if(filter.containsKey("shop")) {
+			return_sql = return_sql+ " or s.name in ( :shops ) ";
 		}
-		if (filter.containsKey("promoter")) {
-			return_sql = return_sql + " or p.name in ( :promoters ) ";
+		if(filter.containsKey("promoter")) {
+			return_sql = return_sql+ " or p.name in ( :promoters ) ";
 		}
-		if (filter.containsKey("product")) {
-			return_sql = return_sql + " or p2.name in ( :products ) ";
+		if(filter.containsKey("product")) {
+			return_sql = return_sql+ " or p2.name in ( :products ) ";
 		}
-		if (filter.containsKey("project")) {
-			return_sql = return_sql + " or d.project in ( :projects ) ";
+		if(filter.containsKey("project")) {
+			return_sql = return_sql+ " or d.project in ( :projects ) ";
 		}
-		if (!return_sql.equals("")) {
-			return_sql = " and ( false " + return_sql + ")";
+		if(!return_sql.equals("")) {
+			return_sql = " and ( false "+return_sql +")";
 		}
 		return return_sql;
 	}
-
+	
 	private void changeQueryParameter(Query query, Map<String, String[]> filter) {
-		if (filter.containsKey("shop")) {
+		if(filter.containsKey("shop")) {
 			query.setParameter("shops", Arrays.asList(filter.get("shop")));
 		}
-		if (filter.containsKey("promoter")) {
+		if(filter.containsKey("promoter")) {
 			query.setParameter("promoters", Arrays.asList(filter.get("promoter")));
 		}
-		if (filter.containsKey("product")) {
+		if(filter.containsKey("product")) {
 			query.setParameter("products", Arrays.asList(filter.get("product")));
 		}
-		if (filter.containsKey("project")) {
-			query.setParameter("projects", Arrays.asList(filter.get("project")).stream().map(x -> Integer.parseInt(x))
-					.collect(Collectors.toList()));
+		if(filter.containsKey("project")) {
+			query.setParameter("projects", Arrays.asList(filter.get("project")).stream().map(x -> Integer.parseInt(x)).collect(Collectors.toList()));
 		}
 	}
 }
