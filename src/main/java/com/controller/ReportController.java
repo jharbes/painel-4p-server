@@ -41,7 +41,7 @@ public class ReportController {
         HttpHeaders headers = new HttpHeaders();
 		List<String[]> datas_excel = new ArrayList<>();
 
-        try {
+        try 
         	List<Object> datas;
         	if(filter == null) {
         		datas = dataFileService.getDetailsToDownload(LocalDateConverter.convertToLocalDate(initialDate) , LocalDateConverter.convertToLocalDate(finalDate)
