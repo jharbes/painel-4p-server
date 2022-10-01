@@ -54,6 +54,15 @@ public class DataFileService {
 		}
 	}
 	
-	
-
+	public List<Object> getDetailsToDownload( LocalDate initialDate ,LocalDate finalDate
+			, long idBrand, Map<String,String[]> filter) throws Exception {
+		try {
+			return dataFileRepositoryimp.findByBrandwithOnlyDetailsToDownload(initialDate,finalDate
+					,idBrand,filter);
+		} catch (Exception e) {
+			throw new Exception("ERRO NA CONSULTA",e);
+		}
+	}
 }
+
+

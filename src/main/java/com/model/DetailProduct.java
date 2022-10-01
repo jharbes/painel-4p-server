@@ -21,7 +21,7 @@ public class DetailProduct {
 	private BigDecimal price;
 	private LocalDate validity;
 	private String Ruptura;
-	private long stock;
+	private Long stock;
 	
 	public DetailProduct() {
 		// TODO Auto-generated constructor stub
@@ -51,7 +51,7 @@ public class DetailProduct {
 	public void setValidity(LocalDate validity) {
 		this.validity = validity;
 	}
-	public long getStock() {
+	public Long getStock() {
 		return stock;
 	}
 	public void setStock(long stock) {
