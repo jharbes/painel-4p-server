@@ -69,7 +69,7 @@ public class DataFileController {
 
 	@ResponseBody
 	@PostMapping("/photos")
-	public ResponseEntity listPhotos(@RequestParam String initialDate,@RequestParam  String finalDate
+	public ResponseEntity listPhotos(@RequestParam(name = "initialDate",required = false) String initialDate,@RequestParam  String finalDate
 			,@RequestParam long idBrand, @RequestBody  FilterForm filter) {
 		try {
 			List<DataFileOnlyPhotoDTO> dtos = new ArrayList<>();

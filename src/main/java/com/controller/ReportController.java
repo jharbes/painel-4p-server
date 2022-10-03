@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,10 +35,11 @@ public class ReportController {
 	DetailProductService detailProductService;
 	@Autowired
 	ExcelService excelService;
-	@ResponseBody
-	@PostMapping("/details")
-	public ResponseEntity listDetailsToDownload(@RequestParam String initialDate,@RequestParam  String finalDate
-			,@RequestParam long idBrand, @RequestBody(required = false)  FilterForm filter) {
+	
+	@RequestMapping(value="/details", method = RequestMethod.POST,consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity listDetailsToDownload(@RequestParam(name ="initialDate",required = false) String initialDate,@RequestParam  String finalDate
+			, @RequestBody(required = false)  FilterForm filter) {
+		Long idBrand = 0l;
         HttpHeaders headers = new HttpHeaders();
 		List<String[]> datas_excel = new ArrayList<>();
 
