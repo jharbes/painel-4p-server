@@ -55,11 +55,15 @@ public class ReportController {
 
     		for(Object object: datas) {
     			Object[] cast = (Object[]) object;
-    			String[] data = new String[8];
-    			data[0] = ((java.sql.Date) cast[1]).toLocalDate().toString();
-                data[1] = (String) cast[2];
-                data[2] = (Project.valueOf(((Integer)cast[3])).isPresent())? Project.valueOf(((Integer)cast[3])).get().toString() : null;
-                for(DetailProduct detail: detailProductService.getDetailProductByDataFile(((BigInteger)cast[0]).longValue())){
+    		    var date = ((java.sql.Date) cast[1]).toLocalDate().toString();
+                var shop = (String) cast[2];
+                var project = ((Integer)cast[3]!=null)? Project.valueOf(((Integer)cast[3])).get().toString() : null;
+                List<DetailProduct> details = detailProductService.getDetailProductByDataFile(((BigInteger)cast[0]).longValue());
+                for(DetailProduct detail: details){
+        			String[] data = new String[8];
+                	data[0] = date.toString();
+                	data[1] = shop;
+                	data[2] = project;
                 	data[3] = detail.getProduct().getName();
                 	data[4] = (detail.getPrice()!=null)? detail.getPrice().toString() : null;
                 	data[5] = (detail.getStock()!=null)? Long.toString(detail.getStock()) : null;

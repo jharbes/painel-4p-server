@@ -24,7 +24,7 @@ public class DetailProductService {
 	public List<DetailProduct> getDetailProductByDataFile(Long idDataFile){
 		List<DetailProduct> detailProducts = new ArrayList<>();
 		 for(Long id: detailProductRepository.getDetailProductByDataFile(idDataFile)) {
-			 detailProducts.add(detailProductRepository.getById(id));
+			 detailProducts.add(detailProductRepository.findById(id).get());
 		 }
 		 return detailProducts;
 	}
