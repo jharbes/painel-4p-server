@@ -36,6 +36,7 @@ public class ReportController {
 	@Autowired
 	ExcelService excelService;
 	
+	
 	@RequestMapping(value="/details", method = RequestMethod.POST,consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity listDetailsToDownload(@RequestParam(name ="initialDate",required = false) String initialDate,@RequestParam  String finalDate
 			, @RequestBody(required = false)  FilterForm filter) {
@@ -81,5 +82,35 @@ public class ReportController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/ruptura")
+	public ResponseEntity rupturaToDownload(@RequestParam(name ="initialDate",required = false) String initialDate,@RequestParam  String finalDate,@RequestParam("idBrand") String idBrand) {
+		try{
+	        HttpHeaders headers = new HttpHeaders();
 
+			List<String[]> datas = detailProductService.getRupturaBetweenDateByBrand(Long.parseLong(idBrand), LocalDateConverter.convertToLocalDate(initialDate),  LocalDateConverter.convertToLocalDate(finalDate));
+			return ResponseEntity
+            		.ok()
+            		.headers(headers)
+            		.contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+            		.body(excelService.generateRupturaExcel(datas));
+		}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/validade")
+	public ResponseEntity validadeToDownload(@RequestParam(name ="initialDate",required = false) String initialDate,@RequestParam  String finalDate,@RequestParam("idBrand") String idBrand) {
+		try{
+	        HttpHeaders headers = new HttpHeaders();
+			List<String[]> datas = detailProductService.getValidityBetweenDateByBrand(Long.parseLong(idBrand), LocalDateConverter.convertToLocalDate(initialDate),  LocalDateConverter.convertToLocalDate(finalDate));
+			return ResponseEntity
+            		.ok()
+            		.headers(headers)
+            		.contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+            		.body(excelService.generateValidadeExcel(datas));
+		}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
+	}
 }
