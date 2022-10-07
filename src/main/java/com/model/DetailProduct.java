@@ -20,7 +20,7 @@ public class DetailProduct {
 	private Product product;
 	private BigDecimal price;
 	private LocalDate validity;
-	private String Ruptura;
+	private String ruptura;
 	private Long stock;
 	
 	public DetailProduct() {
@@ -58,10 +58,10 @@ public class DetailProduct {
 		this.stock = stock;
 	}
 	public String getRuptura() {
-		return Ruptura;
+		return ruptura;
 	}
 	public void setRuptura(String ruptura) {
-		Ruptura = ruptura;
+		this.ruptura = ruptura;
 	}
 }
 

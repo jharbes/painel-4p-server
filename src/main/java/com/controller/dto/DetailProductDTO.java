@@ -62,7 +62,7 @@ public class DetailProductDTO {
 	}
 
 	public void setRuptura(String ruptura) {
-		ruptura = ruptura;
+		this.ruptura = ruptura;
 	}
 
 	public long getStock() {
