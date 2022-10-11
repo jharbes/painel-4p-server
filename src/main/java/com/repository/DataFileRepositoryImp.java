@@ -50,17 +50,37 @@ public class DataFileRepositoryImp {
 				+ " where d.brand_id =:idBrand and d.shop_id = s.id and d.promoter_id = p.id "
 				+ " and d.id = dd.datafile_id  and dd.detailproducts_id = d2.id and d2.product_id = p2.id "
 				+ " and d.data >= :initialDate and d.data <= :finalDate ";
-
-		sql = sql + this.changeSQLString(sql, filter);
+		if(filter!= null) sql = sql + this.changeSQLString(sql, filter);
 		Query query = entityManager.createNativeQuery(sql);
 		query.setParameter("idBrand", idBrand);
 		query.setParameter("initialDate", initialDate);
 		query.setParameter("finalDate", finalDate);
-		changeQueryParameter(query, filter);
+		if(filter!= null) changeQueryParameter(query, filter);
 
 		return query.getResultList();
 	}
+	
+	public List<Object> findByBrandwithOnlyPhotosToBook(LocalDate initialDate, LocalDate finalDate, long idBrand,
+			Map<String, String[]> filter) {
 
+		List<DataFile> datas = new ArrayList<>();
+		Map<String, List<Object>> objects = new HashMap<>();
+
+		String sql = "SELECT distinct d.id as id_datafile, s.name as shop_name ,d.data as date ,d.project as id_project, p.name "
+				+ " FROM datafile d, shop s, promoter p, detailproduct d2 , datafile_detailproduct dd, product p2 "
+				+ " where d.brand_id =:idBrand and d.shop_id = s.id and d.promoter_id = p.id and d.shop_id = s.id and d.promoter_id = p.id "
+				+ " and d.id = dd.datafile_id  and dd.detailproducts_id = d2.id and d2.product_id = p2.id "
+				+ " and d.data >= :initialDate and d.data <= :finalDate ";
+		if(filter!= null) sql = sql + this.changeSQLString(sql, filter);
+		Query query = entityManager.createNativeQuery(sql);
+		query.setParameter("idBrand", idBrand);
+		query.setParameter("initialDate", initialDate);
+		query.setParameter("finalDate", finalDate);
+		if(filter!= null) changeQueryParameter(query, filter);
+
+		return query.getResultList();
+	}
+	
 	public List<Object> findByBrandwithOnlyDetails(LocalDate initialDate, LocalDate finalDate, long idBrand,
 			Map<String, String[]> filter) throws Exception {
 		List<DataFile> datas = new ArrayList<>();
@@ -107,20 +127,22 @@ public class DataFileRepositoryImp {
 
 	private String changeSQLString(String sql, Map<String, String[]> filter) {
 		String return_sql = "";
-		if (filter.containsKey("shop")) {
-			return_sql = return_sql + " or s.name in ( :shops ) ";
-		}
-		if (filter.containsKey("promoter")) {
-			return_sql = return_sql + " or p.name in ( :promoters ) ";
-		}
-		if (filter.containsKey("product")) {
-			return_sql = return_sql + " or p2.name in ( :products ) ";
-		}
-		if (filter.containsKey("project")) {
-			return_sql = return_sql + " or d.project in ( :projects ) ";
-		}
-		if (!return_sql.equals("")) {
-			return_sql = " and ( false " + return_sql + ")";
+		if(filter!=null) {
+			if (filter.containsKey("shop")) {
+				return_sql = return_sql + " or s.name in ( :shops ) ";
+			}
+			if (filter.containsKey("promoter")) {
+				return_sql = return_sql + " or p.name in ( :promoters ) ";
+			}
+			if (filter.containsKey("product")) {
+				return_sql = return_sql + " or p2.name in ( :products ) ";
+			}
+			if (filter.containsKey("project")) {
+				return_sql = return_sql + " or d.project in ( :projects ) ";
+			}
+			if (!return_sql.equals("")) {
+				return_sql = " and ( false " + return_sql + ")";
+			}
 		}
 		return return_sql;
 	}

@@ -43,6 +43,16 @@ public class DataFileService {
 		}
 	}
 	
+	public List<Object> getPhotosToBook(LocalDate initialDate ,LocalDate finalDate
+			, long idBrand, Map<String,String[]> filter) throws Exception{
+		try {
+			return dataFileRepositoryimp.findByBrandwithOnlyPhotosToBook(initialDate,finalDate
+					,idBrand,filter);
+		} catch (Exception e) {
+			throw new Exception("ERRO NA CONSULTA",e);
+		}
+	}
+	
 	
 	public List<Object> getDetails( LocalDate initialDate ,LocalDate finalDate
 			, long idBrand, Map<String,String[]> filter) throws Exception {

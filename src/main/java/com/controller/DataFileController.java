@@ -73,8 +73,15 @@ public class DataFileController {
 			,@RequestParam long idBrand, @RequestBody  FilterForm filter) {
 		try {
 			List<DataFileOnlyPhotoDTO> dtos = new ArrayList<>();
-			List<Object> datas = dataFileService.getPhotos(LocalDateConverter.convertToLocalDate(initialDate) , LocalDateConverter.convertToLocalDate(finalDate)
-					,idBrand,filter.getFilter());
+			List<Object> datas;
+			if(filter!=null) {
+				 datas = dataFileService.getPhotos(LocalDateConverter.convertToLocalDate(initialDate) , LocalDateConverter.convertToLocalDate(finalDate)
+						,idBrand,filter.getFilter());
+			}else {
+				 datas = dataFileService.getPhotos(LocalDateConverter.convertToLocalDate(initialDate) , LocalDateConverter.convertToLocalDate(finalDate)
+						,idBrand,null);
+			}
+			
 			for(Object obj: datas) {
 				Object[] cast = (Object[]) obj;
 				DataFileOnlyPhotoDTO dto = new DataFileOnlyPhotoDTO();
