@@ -13,7 +13,7 @@ public class PDFBackground extends PdfPageEventHelper {
 	public
     void onEndPage(PdfWriter writer, Document document) {
     	try {
-    		Image background = Image.getInstance("C:\\Users\\4P\\Pictures\\background.png");
+    		Image background = Image.getInstance("C:\\Users\\Daniel\\Pictures\\back.jpg");
             // This scales the image to the page,
             // use the image's width & height if you don't want to scale.
             float width = document.getPageSize().getWidth();

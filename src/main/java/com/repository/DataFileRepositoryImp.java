@@ -45,11 +45,13 @@ public class DataFileRepositoryImp {
 		List<DataFile> datas = new ArrayList<>();
 		Map<String, List<Object>> objects = new HashMap<>();
 
-		String sql = "SELECT distinct d.id as id_datafile ,d.brand_id as id_brand ,d.shop_id as id_shop ,d.data as date ,d.project as id_project, d.promoter_id as id_promoter "
-				+ " FROM datafile d, shop s, promoter p, detailproduct d2 , datafile_detailproduct dd, product p2 "
-				+ " where d.brand_id =:idBrand and d.shop_id = s.id and d.promoter_id = p.id "
-				+ " and d.id = dd.datafile_id  and dd.detailproducts_id = d2.id and d2.product_id = p2.id "
-				+ " and d.data >= :initialDate and d.data <= :finalDate ";
+		String sql = "select distinct  d.id as id_datafile ,b.id as id_brand ,d.shop_id as id_shop ,d.data as date ,d.project as id_project, d.promoter_id as id_promoter\r\n"
+				+ "FROM report.datafile d \r\n"
+				+ "inner join report.datafile_photos dp on dp.datafile_id = d.id \r\n"
+				+ "inner join report.photo p on p.id = dp.photos_id \r\n"
+				+ "inner join operation.brand b on d.brand_id = b.id \r\n"
+				+ "inner join operation.shop s on d.shop_id = s.id \r\n"
+				+ "inner join operation.promoter p2 on p2.id = d.promoter_id where b.id = :idBrand and d.data >= :initialDate and d.data <= :finalDate ";
 		if(filter!= null) sql = sql + this.changeSQLString(sql, filter);
 		Query query = entityManager.createNativeQuery(sql);
 		query.setParameter("idBrand", idBrand);
@@ -66,11 +68,13 @@ public class DataFileRepositoryImp {
 		List<DataFile> datas = new ArrayList<>();
 		Map<String, List<Object>> objects = new HashMap<>();
 
-		String sql = "SELECT distinct d.id as id_datafile, s.name as shop_name ,d.data as date ,d.project as id_project, p.name "
-				+ " FROM datafile d, shop s, promoter p, detailproduct d2 , datafile_detailproduct dd, product p2 "
-				+ " where d.brand_id =:idBrand and d.shop_id = s.id and d.promoter_id = p.id and d.shop_id = s.id and d.promoter_id = p.id "
-				+ " and d.id = dd.datafile_id  and dd.detailproducts_id = d2.id and d2.product_id = p2.id "
-				+ " and d.data >= :initialDate and d.data <= :finalDate ";
+		String sql = "select distinct  d.id as id_datafile ,s.name as nameShop ,d.data as date ,d.project as id_project, p2.name as namePromoter \r\n"
+				+ "FROM report.datafile d \r\n"
+				+ "inner join report.datafile_photos dp on dp.datafile_id = d.id \r\n"
+				+ "inner join report.photo p on p.id = dp.photos_id \r\n"
+				+ "inner join operation.brand b on d.brand_id = b.id \r\n"
+				+ "inner join operation.shop s on d.shop_id = s.id \r\n"
+				+ "inner join operation.promoter p2 on p2.id = d.promoter_id where b.id = :idBrand and d.data >= :initialDate and d.data <= :finalDate ";
 		if(filter!= null) sql = sql + this.changeSQLString(sql, filter);
 		Query query = entityManager.createNativeQuery(sql);
 		query.setParameter("idBrand", idBrand);
@@ -86,9 +90,9 @@ public class DataFileRepositoryImp {
 		List<DataFile> datas = new ArrayList<>();
 		Map<String, List<Object>> objects = new HashMap<>();
 		String sql = "SELECT distinct d.id as id_datafile ,d.brand_id as id_brand ,d.shop_id as id_shop ,d.data as date ,d.project as id_project, d.promoter_id as id_promoter "
-				+ " FROM datafile d, shop s, promoter p, detailproduct d2 , datafile_detailproduct dd, product p2 "
+				+ " FROM datafile d, operation.shop s, operation.promoter p, detailproduct d2 , datafile_detailproduct dd, product p2 "
 				+ " where d.brand_id =:idBrand and d.shop_id = s.id and d.promoter_id = p.id "
-				+ " and d.id = dd.datafile_id  and dd.detailproducts_id = d2.id and d2.product_id = p2.id "
+				+ " and d.id = dd.datafile_id  and dd.datafile_detailproduct_id = d2.id and d2.product_id = p2.id "
 				+ " and d.data >= :initialDate and d.data <= :finalDate ";
 
 		if(filter !=null) sql = sql + this.changeSQLString(sql, filter);
@@ -108,9 +112,9 @@ public class DataFileRepositoryImp {
 		List<DataFile> datas = new ArrayList<>();
 		Map<String, List<Object>> objects = new HashMap<>();
 		String sql = "SELECT distinct d.id, d.data as date, s.name as shop ,d.project as id_project "
-				+ " FROM datafile d, shop s, promoter p, detailproduct d2 , datafile_detailproduct dd, product p2 "
+				+ " FROM datafile d, operation.shop s, operation.promoter p, detailproduct d2 , datafile_detailproduct dd, product p2 "
 				+ " where d.brand_id =:idBrand and d.shop_id = s.id and d.promoter_id = p.id "
-				+ " and d.id = dd.datafile_id  and dd.detailproducts_id = d2.id and d2.product_id = p2.id "
+				+ " and d.id = dd.datafile_id  and dd.datafile_detailproduct_id = d2.id and d2.product_id = p2.id "
 				+ " and d.data >= :initialDate and d.data <= :finalDate ";
 
 		if(filter!=null) sql = sql + this.changeSQLString(sql, filter);

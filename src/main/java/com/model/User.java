@@ -3,6 +3,7 @@ package com.model;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,6 +24,8 @@ public class User implements UserDetails {
 	private Brand brand; 
 	@ManyToOne
 	private Role role;
+	@Column
+	private String img;
 	
 	public Role getRole() {
 		return role;
@@ -79,5 +82,11 @@ public class User implements UserDetails {
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub
 		return true;
+	}
+	public String getImg() {
+		return img;
+	}
+	public void setImg(String img) {
+		this.img = img;
 	}
 }

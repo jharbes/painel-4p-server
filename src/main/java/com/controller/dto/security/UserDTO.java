@@ -14,6 +14,7 @@ public class UserDTO {
 	private String username;
 	private String password;
 	private BrandDTO brand;
+	private String img;
 
 	public Long getId() {
 		return id;
@@ -23,11 +24,18 @@ public class UserDTO {
 		return username;
 	}
 
+	public String getImg() {
+		return img;
+	}
+
+	public void setImg(String img) {
+		this.img = img;
+	}
+
 	public String getPassword() {
 		return password;
 	}
-	
-	
+
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -48,7 +56,7 @@ public class UserDTO {
 		this.brand = brand;
 	}
 
-	public UserDTO convertToDTO(User user,ModelMapper modelMapper) {
+	public UserDTO convertToDTO(User user, ModelMapper modelMapper) {
 		return modelMapper.map(user, UserDTO.class);
 	}
 }

@@ -38,9 +38,8 @@ public class ReportController {
 	
 	
 	@RequestMapping(value="/details", method = RequestMethod.POST,consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity listDetailsToDownload(@RequestParam(name ="initialDate",required = false) String initialDate,@RequestParam  String finalDate
+	public ResponseEntity listDetailsToDownload(@RequestParam(name ="initialDate",required = false) String initialDate,@RequestParam  String finalDate,@RequestParam Long idBrand
 			, @RequestBody(required = false)  FilterForm filter) {
-		Long idBrand = 0l;
         HttpHeaders headers = new HttpHeaders();
 		List<String[]> datas_excel = new ArrayList<>();
 

@@ -38,7 +38,6 @@ public class DataFile {
 	@Id@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	@ManyToOne
-	
 	@FilterJoinTable(name="containsShop", condition="name in (:shops)")
 	private Shop shop;
 	@OneToMany(cascade=CascadeType.ALL,fetch = FetchType.EAGER)
