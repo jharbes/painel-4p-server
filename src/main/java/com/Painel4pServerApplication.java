@@ -7,7 +7,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 public class Painel4pServerApplication {
-
+	
+	// testando github atualizacao
 	public static void main(String[] args) {
 		SpringApplication.run(Painel4pServerApplication.class, args);
 	}
