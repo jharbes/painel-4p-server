@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity(name = "_user")
 public class User implements UserDetails {
-	@Id@GeneratedValue(strategy = GenerationType.AUTO)
+	@Id@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String username;
 	private String password;
