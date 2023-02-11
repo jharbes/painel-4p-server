@@ -1,25 +1,15 @@
 package com.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
-import com.controller.dto.DataFileOnlyDetailsDTO;
-import com.controller.dto.DataFileOnlyPhotoDTO;
-import com.controller.dto.DetailProductDTO;
-import com.form.FilterForm;
-import com.model.DataFile;
-import com.repository.DataFileRepository;
 import com.repository.DataFileRepositoryImp;
 import com.repository.FilterRepositoryImp;
-import com.util.LocalDateConverter;
 import com.util.ModelMapperConverter;
 
 @Service
@@ -30,49 +20,65 @@ public class DataFileService {
 	@Autowired
 	FilterRepositoryImp filterRepositoryImp;
 	@Autowired
-    ModelMapperConverter modelConverter;
-	
-	
-	public List<Object> getPhotos(LocalDate initialDate ,LocalDate finalDate
-			, long idBrand, Map<String,String[]> filter) throws Exception{
+	ModelMapperConverter modelConverter;
+
+	public List<Object> getPhotos(LocalDate initialDate, LocalDate finalDate, List<Long> idBrandList,
+			Map<String, String[]> filter) throws Exception {
 		try {
-			return dataFileRepositoryimp.findByBrandwithOnlyPhotos(initialDate,finalDate
-					,idBrand,filter);
+			List<Object> photosList = new ArrayList<>();
+
+			for (Long idBrand : idBrandList)
+				photosList
+						.add(dataFileRepositoryimp.findByBrandwithOnlyPhotos(initialDate, finalDate, idBrand, filter));
+
+			return photosList;
 		} catch (Exception e) {
-			throw new Exception("ERRO NA CONSULTA",e);
+			throw new Exception("ERRO NA CONSULTA", e);
 		}
 	}
-	
-	public List<Object> getPhotosToBook(LocalDate initialDate ,LocalDate finalDate
-			, long idBrand, Map<String,String[]> filter) throws Exception{
+
+	public List<Object> getPhotosToBook(LocalDate initialDate, LocalDate finalDate, List<Long> idBrandList,
+			Map<String, String[]> filter) throws Exception {
 		try {
-			return dataFileRepositoryimp.findByBrandwithOnlyPhotosToBook(initialDate,finalDate
-					,idBrand,filter);
+			List<Object> photosList = new ArrayList<>();
+
+			for (Long idBrand : idBrandList)
+				photosList.add(
+						dataFileRepositoryimp.findByBrandwithOnlyPhotosToBook(initialDate, finalDate, idBrand, filter));
+
+			return photosList;
 		} catch (Exception e) {
-			throw new Exception("ERRO NA CONSULTA",e);
+			throw new Exception("ERRO NA CONSULTA", e);
 		}
 	}
-	
-	
-	public List<Object> getDetails( LocalDate initialDate ,LocalDate finalDate
-			, long idBrand, Map<String,String[]> filter) throws Exception {
+
+	public List<Object> getDetails(LocalDate initialDate, LocalDate finalDate, List<Long> idBrandList,
+			Map<String, String[]> filter) throws Exception {
 		try {
-			return dataFileRepositoryimp.findByBrandwithOnlyDetails(initialDate,finalDate
-					,idBrand,filter);
+			List<Object> detailsList = new ArrayList<>();
+
+			for (Long idBrand : idBrandList)
+				detailsList
+						.add(dataFileRepositoryimp.findByBrandwithOnlyDetails(initialDate, finalDate, idBrand, filter));
+
+			return detailsList;
 		} catch (Exception e) {
-			throw new Exception("ERRO NA CONSULTA",e);
+			throw new Exception("ERRO NA CONSULTA", e);
 		}
 	}
-	
-	public List<Object> getDetailsToDownload( LocalDate initialDate ,LocalDate finalDate
-			, long idBrand, Map<String,String[]> filter) throws Exception {
+
+	public List<Object> getDetailsToDownload(LocalDate initialDate, LocalDate finalDate, List<Long> idBrandList,
+			Map<String, String[]> filter) throws Exception {
 		try {
-			return dataFileRepositoryimp.findByBrandwithOnlyDetailsToDownload(initialDate,finalDate
-					,idBrand,filter);
+			List<Object> detailsDownloadList = new ArrayList<>();
+
+			for (Long idBrand : idBrandList)
+				detailsDownloadList.add(dataFileRepositoryimp.findByBrandwithOnlyDetailsToDownload(initialDate,
+						finalDate, idBrand, filter));
+
+			return detailsDownloadList;
 		} catch (Exception e) {
-			throw new Exception("ERRO NA CONSULTA",e);
+			throw new Exception("ERRO NA CONSULTA", e);
 		}
 	}
 }
-
-

@@ -45,19 +45,19 @@ public class ReportController {
 
 		try {
 			List<Object> datas = new ArrayList<>();
-			for (Long idBrand : idBrandList) {
+			
 				if (filter == null) {
 
 					datas.add(dataFileService.getDetailsToDownload(LocalDateConverter.convertToLocalDate(initialDate),
-							LocalDateConverter.convertToLocalDate(finalDate), idBrand, null));
+							LocalDateConverter.convertToLocalDate(finalDate), idBrandList, null));
 
 				} else {
 
 					datas.add(dataFileService.getDetailsToDownload(LocalDateConverter.convertToLocalDate(initialDate),
-							LocalDateConverter.convertToLocalDate(finalDate), idBrand, filter.getFilter()));
+							LocalDateConverter.convertToLocalDate(finalDate), idBrandList, filter.getFilter()));
 
 				}
-			}
+			
 
 			for (Object object : datas) {
 				Object[] cast = (Object[]) object;
