@@ -55,16 +55,17 @@ public class DataFileController {
 		try {
 			List<DataFileOnlyPhotoDTO> dtos = new ArrayList<>();
 			List<Object> datas = new ArrayList<>();
-			if (filter != null) {
-				for (Long idBrand: idBrandList) {
-				datas.add(dataFileService.getPhotos(LocalDateConverter.convertToLocalDate(initialDate),
-						LocalDateConverter.convertToLocalDate(finalDate), idBrand, filter.getFilter()));
-				}
-			} else {
-				// realmente necessario caso filter == null?
-				for (Long idBrand: idBrandList) {
-				datas.add(dataFileService.getPhotos(LocalDateConverter.convertToLocalDate(initialDate),
-						LocalDateConverter.convertToLocalDate(finalDate), idBrand, null));
+			for (Long idBrand : idBrandList) {
+				if (filter != null) {
+
+					datas.add(dataFileService.getPhotos(LocalDateConverter.convertToLocalDate(initialDate),
+							LocalDateConverter.convertToLocalDate(finalDate), idBrand, filter.getFilter()));
+
+				} else {
+					// realmente necessario caso filter == null?
+
+					datas.add(dataFileService.getPhotos(LocalDateConverter.convertToLocalDate(initialDate),
+							LocalDateConverter.convertToLocalDate(finalDate), idBrand, null));
 				}
 			}
 
@@ -93,10 +94,10 @@ public class DataFileController {
 		try {
 			List<DataFileOnlyDetailsDTO> dtos = new ArrayList<>();
 			List<Object> datas = new ArrayList<>();
-				for (Long idBrand: idBrandList) {
-					datas.add(dataFileService.getDetails(LocalDateConverter.convertToLocalDate(initialDate),
-					LocalDateConverter.convertToLocalDate(finalDate), idBrand, filter.getFilter()));
-				}
+			for (Long idBrand : idBrandList) {
+				datas.add(dataFileService.getDetails(LocalDateConverter.convertToLocalDate(initialDate),
+						LocalDateConverter.convertToLocalDate(finalDate), idBrand, filter.getFilter()));
+			}
 			for (Object obj : datas) {
 				Object[] cast = (Object[]) obj;
 				DataFileOnlyDetailsDTO dto = new DataFileOnlyDetailsDTO();
