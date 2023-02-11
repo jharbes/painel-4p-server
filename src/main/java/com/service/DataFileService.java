@@ -1,7 +1,6 @@
 package com.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,61 +21,37 @@ public class DataFileService {
 	@Autowired
 	ModelMapperConverter modelConverter;
 
-	public List<Object> getPhotos(LocalDate initialDate, LocalDate finalDate, List<Long> idBrandList,
+	public List<Object> getPhotos(LocalDate initialDate, LocalDate finalDate, Long idBrand,
 			Map<String, String[]> filter) throws Exception {
 		try {
-			List<Object> photosList = new ArrayList<>();
-
-			for (Long idBrand : idBrandList)
-				photosList
-						.add(dataFileRepositoryimp.findByBrandwithOnlyPhotos(initialDate, finalDate, idBrand, filter));
-
-			return photosList;
+			return dataFileRepositoryimp.findByBrandwithOnlyPhotos(initialDate, finalDate, idBrand, filter);
 		} catch (Exception e) {
 			throw new Exception("ERRO NA CONSULTA", e);
 		}
 	}
 
-	public List<Object> getPhotosToBook(LocalDate initialDate, LocalDate finalDate, List<Long> idBrandList,
+	public List<Object> getPhotosToBook(LocalDate initialDate, LocalDate finalDate, Long idBrand,
 			Map<String, String[]> filter) throws Exception {
 		try {
-			List<Object> photosList = new ArrayList<>();
-
-			for (Long idBrand : idBrandList)
-				photosList.add(
-						dataFileRepositoryimp.findByBrandwithOnlyPhotosToBook(initialDate, finalDate, idBrand, filter));
-
-			return photosList;
+			return dataFileRepositoryimp.findByBrandwithOnlyPhotosToBook(initialDate, finalDate, idBrand, filter);
 		} catch (Exception e) {
 			throw new Exception("ERRO NA CONSULTA", e);
 		}
 	}
 
-	public List<Object> getDetails(LocalDate initialDate, LocalDate finalDate, List<Long> idBrandList,
+	public List<Object> getDetails(LocalDate initialDate, LocalDate finalDate, Long idBrand,
 			Map<String, String[]> filter) throws Exception {
 		try {
-			List<Object> detailsList = new ArrayList<>();
-
-			for (Long idBrand : idBrandList)
-				detailsList
-						.add(dataFileRepositoryimp.findByBrandwithOnlyDetails(initialDate, finalDate, idBrand, filter));
-
-			return detailsList;
+			return dataFileRepositoryimp.findByBrandwithOnlyDetails(initialDate, finalDate, idBrand, filter);
 		} catch (Exception e) {
 			throw new Exception("ERRO NA CONSULTA", e);
 		}
 	}
 
-	public List<Object> getDetailsToDownload(LocalDate initialDate, LocalDate finalDate, List<Long> idBrandList,
+	public List<Object> getDetailsToDownload(LocalDate initialDate, LocalDate finalDate, Long idBrand,
 			Map<String, String[]> filter) throws Exception {
 		try {
-			List<Object> detailsDownloadList = new ArrayList<>();
-
-			for (Long idBrand : idBrandList)
-				detailsDownloadList.add(dataFileRepositoryimp.findByBrandwithOnlyDetailsToDownload(initialDate,
-						finalDate, idBrand, filter));
-
-			return detailsDownloadList;
+			return dataFileRepositoryimp.findByBrandwithOnlyDetailsToDownload(initialDate, finalDate, idBrand, filter);
 		} catch (Exception e) {
 			throw new Exception("ERRO NA CONSULTA", e);
 		}
