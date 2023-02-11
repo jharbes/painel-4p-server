@@ -19,35 +19,46 @@ import com.util.LocalDateConverter;
 @RestController
 @RequestMapping("/detail")
 public class DetailProductController {
-	
+
 	@Autowired
 	DetailProductService detailProductService;
-	
+
 	@GetMapping
 	@RequestMapping("/ruptura")
-	public ResponseEntity getRupturaBetweenDateByBrand(@RequestParam("idBrand") String idBrand, @RequestParam String initialDate, @RequestParam String finalDate){
+	public ResponseEntity getRupturaBetweenDateByBrand(@RequestParam("idBrand") List<String> idBrandList,
+			@RequestParam String initialDate, @RequestParam String finalDate) {
 		try {
-		List<RupturaByBrandDTO> dtos = new ArrayList<>();
-		List<String[]> datas = detailProductService.getRupturaBetweenDateByBrand(Long.parseLong(idBrand), LocalDateConverter.convertToLocalDate(initialDate),  LocalDateConverter.convertToLocalDate(finalDate));
-		for(String[] data:datas) {
-			RupturaByBrandDTO rupturaByBrandDTO = new RupturaByBrandDTO();
-			rupturaByBrandDTO.setNameShop(data[0]);
-			rupturaByBrandDTO.setNameProduct(data[1]);
-			rupturaByBrandDTO.setDate(data[2]);
-			dtos.add(rupturaByBrandDTO);
-		}
-		return ResponseEntity.status(HttpStatus.OK).body(dtos);
-		}catch (Exception e) {
+			List<RupturaByBrandDTO> dtos = new ArrayList<>();
+			List<String[]> datas = new ArrayList<>();
+			for (String idBrand : idBrandList)
+				datas.addAll(detailProductService.getRupturaBetweenDateByBrand(Long.parseLong(idBrand),
+						LocalDateConverter.convertToLocalDate(initialDate),
+						LocalDateConverter.convertToLocalDate(finalDate)));
+			for (String[] data : datas) {
+				RupturaByBrandDTO rupturaByBrandDTO = new RupturaByBrandDTO();
+				rupturaByBrandDTO.setNameShop(data[0]);
+				rupturaByBrandDTO.setNameProduct(data[1]);
+				rupturaByBrandDTO.setDate(data[2]);
+				dtos.add(rupturaByBrandDTO);
+			}
+			return ResponseEntity.status(HttpStatus.OK).body(dtos);
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 	}
+
 	@GetMapping
 	@RequestMapping("/validity")
-	public ResponseEntity getValidityBetweenDateByBrand(@RequestParam("idBrand") String idBrand, @RequestParam String initialDate, @RequestParam String finalDate){
+	public ResponseEntity getValidityBetweenDateByBrand(@RequestParam("idBrand") List<String> idBrandList,
+			@RequestParam String initialDate, @RequestParam String finalDate) {
 		try {
 			List<ValidityByBrandDTO> dtos = new ArrayList<>();
-			List<String[]> datas = detailProductService.getValidityBetweenDateByBrand(Long.parseLong(idBrand),LocalDateConverter.convertToLocalDate(initialDate),  LocalDateConverter.convertToLocalDate(finalDate));
-			for(String[] data:datas) {
+			List<String[]> datas = new ArrayList<>();
+			for (String idBrand : idBrandList)
+				datas.addAll(detailProductService.getValidityBetweenDateByBrand(Long.parseLong(idBrand),
+						LocalDateConverter.convertToLocalDate(initialDate),
+						LocalDateConverter.convertToLocalDate(finalDate)));
+			for (String[] data : datas) {
 				ValidityByBrandDTO dto = new ValidityByBrandDTO();
 				dto.setDate(data[0]);
 				dto.setNameProduct(data[1]);
@@ -57,15 +68,9 @@ public class DetailProductController {
 				dtos.add(dto);
 			}
 			return ResponseEntity.status(HttpStatus.OK).body(dtos);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 	}
-
-	
-	
-	
-	
-
 
 }

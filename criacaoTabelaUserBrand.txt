@@ -1,0 +1,18 @@
+Hibernate: 
+    
+    create table user_brand (
+       user_id int8 not null,
+        brand_id int8 not null
+    )
+Hibernate: 
+    
+    alter table user_brand 
+       add constraint FKhudyekso4rbkqgobwr5emseew 
+       foreign key (brand_id) 
+       references operation.brand
+Hibernate: 
+    
+    alter table user_brand 
+       add constraint FKgbfl74csv3y8nrcn7eav1mnps 
+       foreign key (user_id) 
+       references _user
