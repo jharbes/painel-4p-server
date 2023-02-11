@@ -28,87 +28,103 @@ import com.util.LocalDateConverter;
 @RequestMapping("/report")
 @RestController
 public class ReportController {
-	
+
 	@Autowired
 	DataFileService dataFileService;
 	@Autowired
 	DetailProductService detailProductService;
 	@Autowired
 	ExcelService excelService;
-	
-	
-	@RequestMapping(value="/details", method = RequestMethod.POST,consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity listDetailsToDownload(@RequestParam(name ="initialDate",required = false) String initialDate,@RequestParam  String finalDate,@RequestParam Long idBrand
-			, @RequestBody(required = false)  FilterForm filter) {
-        HttpHeaders headers = new HttpHeaders();
+
+	@RequestMapping(value = "/details", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity listDetailsToDownload(
+			@RequestParam(name = "initialDate", required = false) String initialDate, @RequestParam String finalDate,
+			@RequestParam List<Long> idBrandList, @RequestBody(required = false) FilterForm filter) {
+		HttpHeaders headers = new HttpHeaders();
 		List<String[]> datas_excel = new ArrayList<>();
 
-        try {
-        	List<Object> datas;
-        	if(filter == null) {
-        		datas = dataFileService.getDetailsToDownload(LocalDateConverter.convertToLocalDate(initialDate) , LocalDateConverter.convertToLocalDate(finalDate)
-        				,idBrand,null);
-        	}else {
-        		datas = dataFileService.getDetailsToDownload(LocalDateConverter.convertToLocalDate(initialDate) , LocalDateConverter.convertToLocalDate(finalDate)
-        				,idBrand,filter.getFilter());
-        	}
+		try {
+			List<Object> datas = new ArrayList<>();
+			for (Long idBrand : idBrandList) {
+				if (filter == null) {
 
-    		for(Object object: datas) {
-    			Object[] cast = (Object[]) object;
-    		    var date = ((java.sql.Date) cast[1]).toLocalDate().toString();
-                var shop = (String) cast[2];
-                var project = ((Integer)cast[3]!=null)? Project.valueOf(((Integer)cast[3])).get().toString() : null;
-                List<DetailProduct> details = detailProductService.getDetailProductByDataFile(((BigInteger)cast[0]).longValue());
-                for(DetailProduct detail: details){
-        			String[] data = new String[8];
-                	data[0] = date.toString();
-                	data[1] = shop;
-                	data[2] = project;
-                	data[3] = detail.getProduct().getName();
-                	data[4] = (detail.getPrice()!=null)? detail.getPrice().toString() : null;
-                	data[5] = (detail.getStock()!=null)? Long.toString(detail.getStock()) : null;
-                    data[6] = (detail.getValidity()!=null)? detail.getValidity().toString(): null;
-                    data[7] = detail.getRuptura();
-                    datas_excel.add(data);
-                }            
-    		}
-    		return ResponseEntity
-            		.ok()
-            		.headers(headers)
-            		.contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-            		.body(excelService.generateDetailsProductExcel(datas_excel));
-        }catch (Exception e) {
+					datas.add(dataFileService.getDetailsToDownload(LocalDateConverter.convertToLocalDate(initialDate),
+							LocalDateConverter.convertToLocalDate(finalDate), idBrand, null));
+
+				} else {
+
+					datas.add(dataFileService.getDetailsToDownload(LocalDateConverter.convertToLocalDate(initialDate),
+							LocalDateConverter.convertToLocalDate(finalDate), idBrand, filter.getFilter()));
+
+				}
+			}
+
+			for (Object object : datas) {
+				Object[] cast = (Object[]) object;
+				var date = ((java.sql.Date) cast[1]).toLocalDate().toString();
+				var shop = (String) cast[2];
+				var project = ((Integer) cast[3] != null) ? Project.valueOf(((Integer) cast[3])).get().toString()
+						: null;
+				List<DetailProduct> details = detailProductService
+						.getDetailProductByDataFile(((BigInteger) cast[0]).longValue());
+				for (DetailProduct detail : details) {
+					String[] data = new String[8];
+					data[0] = date.toString();
+					data[1] = shop;
+					data[2] = project;
+					data[3] = detail.getProduct().getName();
+					data[4] = (detail.getPrice() != null) ? detail.getPrice().toString() : null;
+					data[5] = (detail.getStock() != null) ? Long.toString(detail.getStock()) : null;
+					data[6] = (detail.getValidity() != null) ? detail.getValidity().toString() : null;
+					data[7] = detail.getRuptura();
+					datas_excel.add(data);
+				}
+			}
+			return ResponseEntity.ok().headers(headers)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+					.body(excelService.generateDetailsProductExcel(datas_excel));
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST, value = "/ruptura")
-	public ResponseEntity rupturaToDownload(@RequestParam(name ="initialDate",required = false) String initialDate,@RequestParam  String finalDate,@RequestParam("idBrand") String idBrand) {
-		try{
-	        HttpHeaders headers = new HttpHeaders();
+	public ResponseEntity rupturaToDownload(@RequestParam(name = "initialDate", required = false) String initialDate,
+			@RequestParam String finalDate, @RequestParam("idBrand") List<String> idBrandList) {
+		try {
+			HttpHeaders headers = new HttpHeaders();
 
-			List<String[]> datas = detailProductService.getRupturaBetweenDateByBrand(Long.parseLong(idBrand), LocalDateConverter.convertToLocalDate(initialDate),  LocalDateConverter.convertToLocalDate(finalDate));
-			return ResponseEntity
-            		.ok()
-            		.headers(headers)
-            		.contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-            		.body(excelService.generateRupturaExcel(datas));
-		}catch (Exception e) {
+			List<String[]> datas = new ArrayList<>();
+
+			for (String idBrand : idBrandList)
+				datas.addAll(detailProductService.getRupturaBetweenDateByBrand(Long.parseLong(idBrand),
+						LocalDateConverter.convertToLocalDate(initialDate),
+						LocalDateConverter.convertToLocalDate(finalDate)));
+
+			return ResponseEntity.ok().headers(headers)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+					.body(excelService.generateRupturaExcel(datas));
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST, value = "/validade")
-	public ResponseEntity validadeToDownload(@RequestParam(name ="initialDate",required = false) String initialDate,@RequestParam  String finalDate,@RequestParam("idBrand") String idBrand) {
-		try{
-	        HttpHeaders headers = new HttpHeaders();
-			List<String[]> datas = detailProductService.getValidityBetweenDateByBrand(Long.parseLong(idBrand), LocalDateConverter.convertToLocalDate(initialDate),  LocalDateConverter.convertToLocalDate(finalDate));
-			return ResponseEntity
-            		.ok()
-            		.headers(headers)
-            		.contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-            		.body(excelService.generateValidadeExcel(datas));
-		}catch (Exception e) {
+	public ResponseEntity validadeToDownload(@RequestParam(name = "initialDate", required = false) String initialDate,
+			@RequestParam String finalDate, @RequestParam("idBrand") List<String> idBrandList) {
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			List<String[]> datas = new ArrayList<>();
+			for (String idBrand : idBrandList)
+				datas.addAll(detailProductService.getValidityBetweenDateByBrand(Long.parseLong(idBrand),
+						LocalDateConverter.convertToLocalDate(initialDate),
+						LocalDateConverter.convertToLocalDate(finalDate)));
+
+			return ResponseEntity.ok().headers(headers)
+					.contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+					.body(excelService.generateValidadeExcel(datas));
+
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 	}
